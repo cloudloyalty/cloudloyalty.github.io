@@ -54,7 +54,7 @@
       /* Logo */
       .sc-feJyhm {
         margin: 35px 0px 35px 20px;
-        background-image: url(cloud-loyalty-logo.svg);
+        background-image: url(maxma-logo.svg);
         background-repeat: no-repeat;
         background-size: auto 40px;
       }
@@ -110,14 +110,14 @@
           },
         };
         Redoc.init(
-            'https://api.cloudloyalty.ru/openapi.yaml',
+            'https://api.maxma.com/openapi.yaml',
             options,
             document.getElementById('redoc-container')
         )
 
         document.getElementById('redoc-container').addEventListener('click', function(event) {
             if (event.target.classList.contains('sc-kafWEX')) {
-                location.href = '#';
+                window.scrollTo(0, 0);
             }
         });
     </script>
