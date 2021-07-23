@@ -9,14 +9,19 @@
     document.addEventListener('click', function (ev) {
       var el = ev.target;
 
-      el = el.closest( 'a:link' ); // In case the 'click' event was raised by a descendant of an <a>
-      if (!el) {
-        return;
-      }
+//       el = el.closest( 'a:link' ); // In case the 'click' event was raised by a descendant of an <a>
+//       if (!el) {
+//         alert('no el!');
+//         return;
+//       }
 
-      if (el.href) {
+      var href = el.getAttribute('href');
+
+      if (href) {
         ev.preventDefault();
-        window.document.location.assign(el.href);
+        window.document.location.assign(href);
+      } else {
+        alert('no href!');
       }
     });
   </script>
