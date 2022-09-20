@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>API Cloud Loyalty</title>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png" sizes="16x16">
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      .menu-content {
+        line-height: initial;
+      }
+      .menu-content .operation-type.post {
+        margin-left: 15px;
+        color: #333333;
+        width: 10px;
+        overflow: hidden;
+        height: 10px;
+        margin-top: 5px;
+      }
+      .redoc-json {
+        font-size: 14px;
+      }
+      code {
+        font-family: Consolas,'Lucida Console','DejaVu Sans Mono',Monaco,'Courier New',Courier,monospace;
+      }
+      .react-tabs__tab-list, .sc-eqIVtm, .sc-elJkPf, .sc-hSdWYo {
+        display: none;
+      }
+      .sc-gisBJw {
+        margin-top: 0 !important;
+      }
+      .sc-ifAKCX {
+        margin-top: 30px !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+      }
+      .sc-eNQAEJ {
+        border-radius: 5px;
+      }
+      .sc-kgoBCf {
+        border-bottom: 1px solid #e4edf1 !important;
+      }
+      .sc-dxgOiQ tr:last-child > .sc-kgoBCf {
+        border-bottom: 0 !important;
+      }
+      /* Logo */
+      .sc-feJyhm {
+        margin: 35px 0px 35px 20px;
+        background-image: url(maxma-logo.svg);
+        background-repeat: no-repeat;
+        background-size: auto 40px;
+      }
+      .sc-kafWEX {
+        cursor: pointer;
+        height: 40px;
+        padding: 0 !important;
+        width: initial !important;
+        opacity: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="redoc-container"></div>
+    <script src="https://cdn.jsdelivr.net/npm/redoc@v2.0.0-rc.32/bundles/redoc.standalone.js"></script>
+    <script>
+        var options = {
+          hideLoading: true,
+          disableSearch: true,
+          pathInMiddlePanel: true,
+          hideSingleRequestSampleTab: true,
+          expandResponses: 'all',
+          theme: {
+            colors: {
+              http: {
+                post: "#333333",
+              },
+              primary: {
+                "main": "#766cb9"
+              },
+              success: {
+                "main": "#6ec5ab"
+              },
+              error: {
+                "main": "#c05f68"
+              },
+            },
+            typography: {
+              fontSize: '16px',
+              lineHeight: '24px',
+              headings: {
+                fontFamily: 'Roboto, sans-serif',
+              },
+              code: {
+                color: "#C05F68",
+                fontFamily: "Consolas,'Lucida Console','DejaVu Sans Mono',Monaco,'Courier New',Courier,monospace",
+                fontSize: '14px',
+              },
+            },
+            logo: {
+              gutter: '10px',
+            },
+          },
+        };
+        Redoc.init(
+            'openapi-webhooks.yaml',
+            options,
+            document.getElementById('redoc-container')
+        )
+
+        document.getElementById('redoc-container').addEventListener('click', function(event) {
+            if (event.target.classList.contains('sc-kafWEX')) {
+                window.scrollTo(0, 0);
+            }
+        });
+    </script>
+  </body>
+</html>

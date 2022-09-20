@@ -1,0 +1,326 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: MAXMA Webhooks (обратный API)
+  description: >
+    #### Зачем нужен этот документ
+
+    Процессинг MAXMA может выступать в роли клиента, чтобы сообщать вам о произошедших событиях.
+
+    Для этого в вашей системе нужно организовать веб-сервер с публичным IP-адресом, который может
+    принимать и обрабатывать запросы в описанном в этом документе формате.
+
+    #### Формат сообщения
+
+    Сообщение закодировано в JSON и передается в теле POST-запроса.
+
+    #### Аутентификация запросов
+
+    Доступ к веб-серверу рекомендуем закрыть HTTP-авторизацией, чтобы никто кроме нас не мог отправлять на него сообщения. Если авторизация не пройдена, возвращайте ```401 Unauthorized``` или ```403 Forbidden```, так мы поймем, что что-то пошло не так, но при этом не будем повторять попытки отправки до исправления ошибок.
+
+    Также можно разрешить доступ к веб-серверу только для нашего диапазона IP-адресов (диапазон предоставляем по запросу).
+
+    #### Форматы данных
+
+    ##### Строки
+
+    Для строк используется кодировка UTF-8.
+
+    ##### Дата и время
+
+    Дата и время форматируется в соответствии с RFC 3339 "Date and Time on the Internet: Timestamps" (http://tools.ietf.org/html/rfc3339).
+
+    Пример: ```1996-12-19T16:39:57-08:00```
+
+    ##### Денежные величины
+
+    Все денежные величины указываются в рублях. С технической точки зрения они представляются вещественным числом с фиксированной точностью (2 знака после запятой). Разделитель целой и дробной части - точка.
+
+    #### Обработка ошибок
+
+    Если сообщение успешно принято и обработано у вас, сообщайте код ответа ```200 OK```. Тело может быть любым, мы на него не смотрим.
+
+    Если произошла ошибка в вашей системе, возвращайте код 5XX, например ```500 Internal Server Error```, в этом случае мы повторим запрос через некоторое время. Всего мы делаем 10 попыток доставки сообщения с увеличивающимся интервалом между попытками. Если на десятую попытку ваша система ответила ошибкой, мы прекращаем доставку этого сообщения.
+
+    Если вам пришло некорректное сообщение, которая ваша система не может обработать, или если авторизация не пройдена, возвращайте код 4XX, например ```400 Bad Request```. Мы не будем повторять попытку доставить такое сообщение и разберемся с причинами, почему оно не доставлено.
+
+    На статусы 3XX мы не реагируем, по редиректу не переходим, попытку доставки в случае такого ответа не повторяем.
+
+    Таймаут на ожидание ответа от вашего сервера - 30 секунд. Не дождавшись ответа, мы попытаемся отправить запрос повторно (так же, как при ошибке 5XX).
+
+    Из-за специфики сетевого обмена одно и то же сообщение может быть доставлено вам несколько раз. Если вам важно этого избежать, записывайте значение поля eventId для обработанных сообщений и игнорируйте повторно пришедшее сообщение с этим кодом.
+
+    #### События
+
+    | Код события                     | Описание и дополнительные данные                                          |
+    |---------------------------------|---------------------------------------------------------------------------|
+    | EVENT_CLIENT_EMAIL_SUBSCRIBED   | Клиент подтвердил согласие на маркетинговые рассылки по электронной почте |
+    | EVENT_CLIENT_EMAIL_UNSUBSCRIBED | Клиент отписался от маркетинговых рассылок по электронной почте           |
+    | EVENT_CLIENT_NEW                | Создан клиент                                                             |
+    | EVENT_CLIENT_CHANGED            | Данные о клиенте изменились                                               |
+    | EVENT_CLIENT_BONUSES_CHANGED    | Количество бонусов на счете клиента изменилось                            |
+
+host: yourhost.com
+basePath: /
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /event:
+    x-summary: Уведомление о событии
+    x-description: >
+      Запрос делается: с сервера MAXMA ➡️ на ваш сервер.
+    post:
+      summary: POST https://yourhost.com/path/send
+      description: >
+        Вызывается, когда происходит событие, на которое вы подписаны. Содержит код произошедшего события и его атрибуты.
+
+        URL для обращения на вашей стороне может быть произвольным.
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/EventRequest'
+          example:
+            - event: EVENT_CLIENT_EMAIL_UNSUBSCRIBED
+              eventId: 3f94c77c-5e2a-4a6e-85cd-730d0c7b33aa
+              eventTime: '2016-12-19T16:39:57+03:00'
+              EVENT_CLIENT_EMAIL_UNSUBSCRIBED:
+                client:
+                  phoneNumber: "+79991234567"
+                  card: '200000000446'
+                email: zhiglov20@gmail.com
+
+            - event: EVENT_CLIENT_CHANGED
+              eventId: 0a353b66-5ac9-4cbb-9c52-596f46bfac62
+              eventTime: '2016-12-19T17:24:32+03:00'
+              EVENT_CLIENT_CHANGED:
+                client:
+                  phoneNumber: '+79991234567'
+                  card: '200000000446'
+                clientData:
+                  phoneNumber: '+79991234567'
+                  card: '200000000447'
+                  email: zhiglov20@gmail.com
+                  surname: Жиглов
+                  name: Вениамин
+                  patronymicName: Карлович
+                  fullName: Вениамин Карлович Жиглов
+                  gender: 1
+                  birthdate: '1967-11-21T00:00:00+03:00'
+                  city: Реутов
+                  street: Победы
+
+            - event: EVENT_CLIENT_BONUSES_CHANGED
+              eventId: 00f09507-2aea-4bc4-aad9-c68e83a8448c
+              eventTime: '2016-12-19T17:24:44+03:00'
+              EVENT_CLIENT_BONUSES_CHANGED:
+                client:
+                  phoneNumber: '+79991234567'
+                  card: '200000000447'
+                clientBonuses:
+                  totalAmount: 800
+                  availableAmount: 600
+                  pendingAmount: 200
+
+      responses:
+        200:
+          description: Запрос обработан успешно
+        403:
+          description: Запрос не обработан из-за ошибки авторизации
+        500:
+          description: Ошибка на сервере, запрос нужно повторить
+
+definitions:
+  EventRequest:
+    type: array
+    items:
+      type: object
+      properties:
+        event:
+          type: string
+          description: >
+            Код произошедшего события.
+
+            Коды событий и рсшифровки приведены в таблице "События".
+        eventId:
+          type: string
+          description: >
+            Уникальный идентификатор события.
+
+            Можно использовать для того, чтобы игнорировать ранее обработанное, но повторно полученное событие.
+
+        eventTime:
+          type: string
+          format: date-time
+          description: дата и время произошедшего события
+
+        source:
+          type: string
+          enum:
+            - api
+            - internal
+          description: >
+            Источник изменения.
+
+            Возможные значения:
+            - api - изменение сделано извне по API;
+            - internal - изменение произошло внутри системы.
+
+        EVENT_CLIENT_EMAIL_SUBSCRIBED:
+          $ref: '#/definitions/subscriptionEventPayload'
+
+        EVENT_CLIENT_EMAIL_UNSUBSCRIBED:
+          $ref: '#/definitions/subscriptionEventPayload'
+
+        EVENT_CLIENT_NEW:
+          type: object
+          properties:
+            clientData:
+              $ref: '#/definitions/clientInfo'
+          required:
+            - clientData
+
+        EVENT_CLIENT_CHANGED:
+          type: object
+          properties:
+            client:
+              $ref: '#/definitions/clientQuery'
+            clientData:
+              $ref: '#/definitions/clientInfo'
+          required:
+            - client
+            - clientData
+
+        EVENT_CLIENT_BONUSES_CHANGED:
+          type: object
+          properties:
+            client:
+              $ref: '#/definitions/clientQuery'
+            clientBonuses:
+              $ref: '#/definitions/clientBonuses'
+          required:
+            - client
+            - clientBonuses
+
+      required:
+        - event
+        - eventId
+        - eventTime
+        - source
+
+  subscriptionEventPayload:
+    type: object
+    properties:
+      client:
+        $ref: '#/definitions/clientQuery'
+      email:
+        type: string
+        description: адрес электронной почты
+    required:
+      - client
+      - email
+
+  clientQuery:
+    type: object
+    description: клиент, по которому произошло событие
+    properties:
+      phoneNumber:
+        type: string
+        description: номер телефона клиента
+      card:
+        type: string
+        description: номер карты
+      externalId:
+        type: string
+        description: внешний идентификатор
+
+  clientData:
+    type: object
+    description: информация о клиенте
+    properties:
+      phoneNumber:
+        type: string
+        description: номер телефона клиента
+      card:
+        type: string
+        description: номер карты
+      externalId:
+        type: string
+        description: внешний идентификатор
+      email:
+        type: string
+        description: адрес электронной почты
+      surname:
+        type: string
+        description: фамилия отдельно
+      name:
+        type: string
+        description: имя отдельно
+      patronymicName:
+        type: string
+        description: отчество отдельно
+      fullName:
+        type: string
+        description: фамилия, имя и отчество
+      gender:
+        type: number
+        format: int32
+        enum:
+          - 0
+          - 1
+          - 2
+        description: >
+          Пол клиента.
+
+          Поддерживаемые значения:
+            - 0 - пол неизвестен,
+            - 1 - мужской,
+            - 2 - женский
+
+      birthdate:
+        type: string
+        format: date-time
+        description: >
+          Дата рождения.
+
+          Формат даты: ```1967-11-21T00:00:00+03:00```. Время всегда по нулям.
+
+          Если нам известны только день и месяц рождения, а год рождения клиент не предоставил,
+          год в этом поле будет - 1900, например, ```1900-11-21T00:00:00+03:00```.
+
+      level:
+        type: number
+        format: int32
+        description: уровень клиента в программе лояльности
+      isEmailSubscribed:
+        type: boolean
+        description: флаг, подписан ли клиент на маркетинговые рассылки по электронной почте
+      isPhoneSubscribed:
+        type: boolean
+        description: флаг, подписан ли клиент на маркетинговые рассылки по SMS или Viber
+      extraFields:
+        type: object
+        description: дополнительные параметры клиента
+
+  clientBonuses:
+    type: object
+    description: информация о бонусном счете
+    properties:
+      totalAmount:
+        type: number
+        format: int32
+        description: всего бонусов у клиента (available + pending)
+      availableAmount:
+        type: number
+        format: int32
+        description: количество доступных для расходования бонусов
+      pendingAmount:
+        type: number
+        format: int32
+        description: количество бонусов, которые начислены, но пока недоступны
