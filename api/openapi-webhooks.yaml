@@ -81,52 +81,11 @@ paths:
 
         URL для обращения на вашей стороне может быть произвольным.
       parameters:
-        - name: body
+        - name: payload
           in: body
           required: true
           schema:
             $ref: '#/definitions/EventRequest'
-          example:
-            - event: EVENT_CLIENT_EMAIL_UNSUBSCRIBED
-              eventId: 3f94c77c-5e2a-4a6e-85cd-730d0c7b33aa
-              eventTime: '2016-12-19T16:39:57+03:00'
-              EVENT_CLIENT_EMAIL_UNSUBSCRIBED:
-                client:
-                  phoneNumber: "+79991234567"
-                  card: '200000000446'
-                email: zhiglov20@gmail.com
-
-            - event: EVENT_CLIENT_CHANGED
-              eventId: 0a353b66-5ac9-4cbb-9c52-596f46bfac62
-              eventTime: '2016-12-19T17:24:32+03:00'
-              EVENT_CLIENT_CHANGED:
-                client:
-                  phoneNumber: '+79991234567'
-                  card: '200000000446'
-                clientData:
-                  phoneNumber: '+79991234567'
-                  card: '200000000447'
-                  email: zhiglov20@gmail.com
-                  surname: Жиглов
-                  name: Вениамин
-                  patronymicName: Карлович
-                  fullName: Вениамин Карлович Жиглов
-                  gender: 1
-                  birthdate: '1967-11-21T00:00:00+03:00'
-                  city: Реутов
-                  street: Победы
-
-            - event: EVENT_CLIENT_BONUSES_CHANGED
-              eventId: 00f09507-2aea-4bc4-aad9-c68e83a8448c
-              eventTime: '2016-12-19T17:24:44+03:00'
-              EVENT_CLIENT_BONUSES_CHANGED:
-                client:
-                  phoneNumber: '+79991234567'
-                  card: '200000000447'
-                clientBonuses:
-                  totalAmount: 800
-                  availableAmount: 600
-                  pendingAmount: 200
 
       responses:
         200:
@@ -182,7 +141,7 @@ definitions:
           type: object
           properties:
             clientData:
-              $ref: '#/definitions/clientInfo'
+              $ref: '#/definitions/clientData'
           required:
             - clientData
 
@@ -192,7 +151,7 @@ definitions:
             client:
               $ref: '#/definitions/clientQuery'
             clientData:
-              $ref: '#/definitions/clientInfo'
+              $ref: '#/definitions/clientData'
           required:
             - client
             - clientData
@@ -213,6 +172,48 @@ definitions:
         - eventId
         - eventTime
         - source
+
+    example:
+      - event: EVENT_CLIENT_EMAIL_UNSUBSCRIBED
+        eventId: 3f94c77c-5e2a-4a6e-85cd-730d0c7b33aa
+        eventTime: '2016-12-19T16:39:57+03:00'
+        EVENT_CLIENT_EMAIL_UNSUBSCRIBED:
+          client:
+            phoneNumber: "+79991234567"
+            card: '200000000446'
+          email: zhiglov20@gmail.com
+
+      - event: EVENT_CLIENT_CHANGED
+        eventId: 0a353b66-5ac9-4cbb-9c52-596f46bfac62
+        eventTime: '2016-12-19T17:24:32+03:00'
+        EVENT_CLIENT_CHANGED:
+          client:
+            phoneNumber: '+79991234567'
+            card: '200000000446'
+          clientData:
+            phoneNumber: '+79991234567'
+            card: '200000000447'
+            email: zhiglov20@gmail.com
+            surname: Жиглов
+            name: Вениамин
+            patronymicName: Карлович
+            fullName: Вениамин Карлович Жиглов
+            gender: 1
+            birthdate: '1967-11-21T00:00:00+03:00'
+            city: Реутов
+            street: Победы
+
+      - event: EVENT_CLIENT_BONUSES_CHANGED
+        eventId: 00f09507-2aea-4bc4-aad9-c68e83a8448c
+        eventTime: '2016-12-19T17:24:44+03:00'
+        EVENT_CLIENT_BONUSES_CHANGED:
+          client:
+            phoneNumber: '+79991234567'
+            card: '200000000447'
+          clientBonuses:
+            totalAmount: 800
+            availableAmount: 600
+            pendingAmount: 200
 
   subscriptionEventPayload:
     type: object
