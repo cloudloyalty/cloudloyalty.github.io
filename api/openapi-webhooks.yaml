@@ -66,9 +66,6 @@ servers:
   - url: https://your-host.com
     description: Ваш сервер
 
-tags:
-  - name: Методы
-
 paths:
   /your-path:
     post:
@@ -77,8 +74,6 @@ paths:
         Запрос делается: с сервера MAXMA на ваш сервер. URL для вызова может быть любым.
 
         Вызывается, когда происходит событие, на которое вы подписаны. Содержит код произошедшего события и его атрибуты.
-      tags:
-        - Методы
       requestBody:
         content:
           application/json:
