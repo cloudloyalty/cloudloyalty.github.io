@@ -65,9 +65,42 @@
         width: initial !important;
         opacity: 0;
       }
+
+      .tabbar {
+        font-family: Roboto, sans-serif;
+        background-color: rgb(250, 250, 250);
+        border-bottom: 1px solid rgb(230, 230, 230);
+      }
+      .tabbar ul {
+        margin: 0;
+        padding: 0;
+      }
+      .tabbar li {
+        display: inline-block;
+        margin: 0;
+      }
+      .tabbar li a, .tabbar li span {
+        padding: 5px 15px;
+        display: inline-block;
+        width: 80px;
+        text-align: center;
+        color: rgb(118, 108, 185);
+      }
+      .tabbar li a:hover {
+        color: rgb(182, 177, 218);
+      }
+      .tabbar li.active {
+        background-color: rgb(230, 230, 230);
+      }
     </style>
   </head>
   <body>
+    <div class="tabbar">
+      <ul>
+        <li>API</li>
+        <li><a href="/api/webhooks.html">Webhooks</a></li>
+      </ul>
+    </div>
     <div id="redoc-container"></div>
     <script src="https://cdn.jsdelivr.net/npm/redoc@v2.0.0-rc.32/bundles/redoc.standalone.js"></script>
     <script>

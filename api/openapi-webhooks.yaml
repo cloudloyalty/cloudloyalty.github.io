@@ -21,6 +21,7 @@ info:
     | `EVENT_CLIENT_NEW`                | Создан клиент                                                             |
     | `EVENT_CLIENT_CHANGED`            | Данные о клиенте изменились                                               |
     | `EVENT_CLIENT_BONUSES_CHANGED`    | Количество бонусов на счете клиента изменилось                            |
+    | `EVENT_PURCHASE_NEW`              | Создана новая покупка [в разработке]                                      |
 
     ## Аутентификация запросов
 
@@ -100,7 +101,7 @@ components:
             description: |
               Код произошедшего события.
   
-              Коды событий и рсшифровки приведены в таблице "События".
+              Коды событий и рсшифровки приведены в [таблице "События"](#section/Obshie-svedeniya/Sobytiya).
           eventId:
             type: string
             description: |
@@ -111,7 +112,7 @@ components:
           eventTime:
             type: string
             format: date-time
-            description: дата и время произошедшего события
+            description: Дата и время произошедшего события
 
           source:
             type: string
@@ -161,6 +162,49 @@ components:
               - client
               - clientBonuses
 
+          EVENT_PURCHASE_NEW:
+            type: object
+            properties:
+              client:
+                $ref: '#/components/schemas/clientQuery'
+              shop:
+                $ref: '#/components/schemas/shopQuery'
+              cashier:
+                $ref: '#/components/schemas/cashierQuery'
+              txid:
+                type: string
+                description: Уникальный идентификатор покупки
+              executedAt:
+                type: string
+                format: date-time
+                description: Дата и время выполнения покупки
+              totalAmount:
+                type: number
+                format: float
+                description: Сумма покупки
+              totalDiscount:
+                type: number
+                format: float
+                description: Сумма скидки
+              discounts:
+                $ref: '#/components/schemas/purchaseDiscounts'
+              bonuses:
+                $ref: '#/components/schemas/purchaseBonuses'
+              promocode:
+                type: string
+                description: Промокод, который был использован при покупке
+              rows:
+                type: array
+                items:
+                  $ref: '#/components/schemas/purchaseRow'
+            required:
+              - shop
+              - txid
+              - executedAt
+              - totalAmount
+              - totalDiscount
+              - discounts
+
         required:
           - event
           - eventId
@@ -209,6 +253,33 @@ components:
               availableAmount: 600
               pendingAmount: 200
 
+        - event: EVENT_PURCHASE_NEW
+          eventId: 0a353b66-5ac9-4cbb-9c52-596f46bfac62
+          eventTime: '2016-12-19T17:24:32+03:00'
+          EVENT_PURCHASE_NEW:
+            client:
+              phoneNumber: '+79991234567'
+              card: '200000000447'
+            shop:
+              code: '1'
+              name: Магазин 1
+            cashier:
+              code: '1'
+              name: Кассир 1
+            txid: 00f09507-2aea-4bc4-aad9-c68e83a8448c
+            executedAt: '2016-12-19T17:24:32+03:00'
+            totalAmount: 1000
+            totalDiscount: 200
+            discounts:
+              initial: 0
+              bonuses: 200
+              promocode: 0
+              offer: 0
+              rounding: 0
+            bonuses:
+              applied: 200
+              collected: 120
+
     subscriptionEventPayload:
       type: object
       properties:
@@ -216,53 +287,53 @@ components:
           $ref: '#/components/schemas/clientQuery'
         email:
           type: string
-          description: адрес электронной почты
+          description: Адрес электронной почты
       required:
         - client
         - email
 
     clientQuery:
       type: object
-      description: клиент, по которому произошло событие
+      description: Данные о клиенте
       properties:
         phoneNumber:
           type: string
-          description: номер телефона клиента
+          description: Номер телефона клиента
         card:
           type: string
-          description: номер карты
+          description: Номер карты
         externalId:
           type: string
-          description: внешний идентификатор
+          description: Внешний идентификатор
 
     clientData:
       type: object
-      description: информация о клиенте
+      description: Информация о клиенте
       properties:
         phoneNumber:
           type: string
-          description: номер телефона клиента
+          description: Номер телефона клиента
         card:
           type: string
-          description: номер карты
+          description: Номер карты
         externalId:
           type: string
-          description: внешний идентификатор
+          description: Внешний идентификатор
         email:
           type: string
-          description: адрес электронной почты
+          description: Адрес электронной почты
         surname:
           type: string
-          description: фамилия отдельно
+          description: Фамилия отдельно
         name:
           type: string
-          description: имя отдельно
+          description: Имя отдельно
         patronymicName:
           type: string
-          description: отчество отдельно
+          description: Отчество отдельно
         fullName:
           type: string
-          description: фамилия, имя и отчество
+          description: Фамилия, имя и отчество
         gender:
           type: number
           format: int32
@@ -292,30 +363,111 @@ components:
         level:
           type: number
           format: int32
-          description: уровень клиента в программе лояльности
+          description: Уровень клиента в программе лояльности
         isEmailSubscribed:
           type: boolean
-          description: флаг, подписан ли клиент на маркетинговые рассылки по электронной почте
+          description: Флаг, подписан ли клиент на маркетинговые рассылки по электронной почте
         isPhoneSubscribed:
           type: boolean
-          description: флаг, подписан ли клиент на маркетинговые рассылки по SMS или Viber
+          description: Флаг, подписан ли клиент на маркетинговые рассылки по SMS или Viber
         extraFields:
           type: object
-          description: дополнительные параметры клиента
+          description: Дополнительные параметры клиента
 
     clientBonuses:
       type: object
-      description: информация о бонусном счете
+      description: Информация о бонусном счете
       properties:
         totalAmount:
           type: number
           format: int32
-          description: всего бонусов у клиента (available + pending)
+          description: Всего бонусов у клиента (available + pending)
         availableAmount:
           type: number
           format: int32
-          description: количество доступных для расходования бонусов
+          description: Количество доступных для расходования бонусов
         pendingAmount:
           type: number
           format: int32
-          description: количество бонусов, которые начислены, но пока недоступны
+          description: Количество бонусов, которые начислены, но пока недоступны
+
+    shopQuery:
+      type: object
+      description: Данные о торговой точке
+      properties:
+        code:
+          type: string
+          description: Код
+        name:
+          type: string
+          description: Название
+      required:
+        - code
+        - name
+
+    cashierQuery:
+      type: object
+      description: Данные о кассире
+      properties:
+        code:
+          type: string
+          description: Код или табельный номер
+        name:
+          type: string
+          description: Имя
+      required:
+        - code
+        - name
+
+    purchaseDiscounts:
+      description: Детализация по скидкам
+      type: object
+      properties:
+        initial:
+          description: Скидка кассы
+          type: number
+          format: float
+        bonuses:
+          description: Скидка по бонусам
+          type: number
+          format: float
+        promocode:
+          description: Скидка по промокоду
+          type: number
+          format: float
+        offer:
+          description: Скидка по акции
+          type: number
+          format: float
+        rounding:
+          description: Округление
+          type: number
+          format: float
+      required:
+        - initial
+        - bonuses
+        - promocode
+        - offer
+        - rounding
+
+    purchaseBonuses:
+      description: Детализация по начисленным бонусам
+      type: object
+      properties:
+        applied:
+          description: Применено
+          type: integer
+          format: int32
+          minimum: 0
+        collected:
+          description: Накоплено
+          type: integer
+          format: int32
+          minimum: 0
+      required:
+        - applied
+        - collected
+
+    purchaseRow:
+      description: Позиция чека (появится позже)
+      type: object
