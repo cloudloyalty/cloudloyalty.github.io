@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
   <head>
     <title>MAXMA API</title>
 
@@ -53,7 +53,7 @@
       }
       /* Logo */
       .sc-feJyhm {
-        margin: 35px 0px 35px 20px;
+        margin: 35px 0 35px 20px;
         background-image: url(maxma-logo.svg);
         background-repeat: no-repeat;
         background-size: auto 40px;
@@ -82,7 +82,7 @@
       .tabbar li a, .tabbar li span {
         padding: 5px 15px;
         display: inline-block;
-        width: 80px;
+        min-width: 60px;
         text-align: center;
         color: rgb(118, 108, 185);
       }
@@ -99,10 +99,11 @@
       <ul>
         <li><a href="/api/">API</a></li>
         <li class="active"><span>Webhooks</span></li>
+        <li><a href="/api/messaging.html">Messaging API</a></li>
       </ul>
     </div>
     <div id="redoc-container"></div>
-    <script src="https://cdn.jsdelivr.net/npm/redoc@v2.0.0-rc.32/bundles/redoc.standalone.js"></script>
+    <script src="redoc.standalone.js"></script>
     <script>
         var options = {
           hideLoading: true,

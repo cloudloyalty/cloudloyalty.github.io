@@ -97,9 +97,9 @@
   <body>
     <div class="tabbar">
       <ul>
-        <li class="active"><span>API</span></li>
+        <li><a href="/api/">API</a></li>
         <li><a href="/api/webhooks.html">Webhooks</a></li>
-        <li><a href="/api/messaging.html">Messaging API</a></li>
+        <li class="active"><span>Messaging API</span></li>
       </ul>
     </div>
     <div id="redoc-container"></div>
@@ -144,7 +144,7 @@
           },
         };
         Redoc.init(
-            'https://api.maxma.com/openapi.yaml',
+            'openapi-messaging.yaml',
             options,
             document.getElementById('redoc-container')
         )
