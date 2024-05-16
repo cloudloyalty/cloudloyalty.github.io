@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
   <head>
-    <title>MAXMA API - Webhooks</title>
+    <title>MAXMA API - JS API</title>
 
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,8 +14,8 @@
     <div class="tabbar">
       <ul>
         <li><a href="/api/">API</a></li>
-        <li class="active"><span>Webhooks</span></li>
-        <li><a href="/api/jsapi.html">JS API</a></li>
+        <li><a href="/api/webhooks.html">Webhooks</a></li>
+        <li class="active"><span>JS API</span></li>
         <li><a href="/api/messaging.html">Messaging API</a></li>
       </ul>
     </div>
@@ -24,7 +24,7 @@
     <script src="redoc-options.js"></script>
     <script>
         Redoc.init(
-            'openapi-webhooks.yaml',
+            'https://js-api.maxma.com/openapi.yaml',
             options,
             document.getElementById('redoc-container')
         );
