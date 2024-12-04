@@ -1,1 +1,35 @@
-<a href="market://details?id=io.walletpasses.android">Click me</a>
+<html>
+  <body>
+    <script>
+      var renderUrl = "https://pass.maxma.com/render/e8c44274-26c9-4019-9034-409008878070";
+      var referrer = encodeURIComponent('pass=' + renderEncoded);
+      // wp
+      var urlWp = 'intent://import/' + renderEncoded + '#Intent;scheme=walletpasses;package=io.walletpasses.android;end';
+      var fallbackUrlWp = 'https://play.google.com/store/apps/details?id=io.walletpasses.android&referrer=' + referrer;
+      var fallbackAltUrlWp = 'market://details?id=io.walletpasses.android&referrer=' + referrer;
+      var urlWithFallbackWp = 'intent://import/' + renderEncoded + '#Intent;scheme=walletpasses;package=io.walletpasses.android;S.browser_fallback_url=' + encodeURIComponent(fallbackUrlWp) + ';end';
+      var urlWithFallbackAltWp = 'intent://import/' + renderEncoded + '#Intent;scheme=walletpasses;package=io.walletpasses.android;S.browser_fallback_url=' + encodeURIComponent(fallbackAltUrlWp) + ';end';
+      // wu
+      var urlWu = 'intent://import/' + renderEncoded + '#Intent;scheme=walletunion;package=com.walletunion.wallet;end';
+      var fallbackUrlWu = 'https://play.google.com/store/apps/details?id=com.walletunion.wallet&referrer=' + renderEncoded;
+      var fallbackAltUrlWu = 'market://details?id=com.walletunion.wallet&referrer=' + renderEncoded;
+      var urlWithFallbackWu = 'intent://import/' + renderEncoded + '#Intent;scheme=walletunion;package=com.walletunion.wallet;S.browser_fallback_url=' + encodeURIComponent(fallbackUrlWu) + ';end';
+      var urlWithFallbackAltWu = 'intent://import/' + renderEncoded + '#Intent;scheme=walletunion;package=com.walletunion.wallet;S.browser_fallback_url=' + encodeURIComponent(fallbackAltUrlWu) + ';end';
+
+      function nav(url) {
+        window.location = url;
+      }
+    </script>
+
+    <ul>
+      <li><a href="javascript:nav(urlWp)">urlWp</a></li>
+      <li><a href="javascript:nav(urlWithFallbackWp)">urlWithFallbackWp</a></li>
+      <li><a href="javascript:nav(urlWithFallbackAltWp)">urlWithFallbackAltWp</a></li>
+    </ul>
+    <ul>
+      <li><a href="javascript:nav(urlWu)">urlWu</a></li>
+      <li><a href="javascript:nav(urlWithFallbackWu)">urlWithFallbackWu</a></li>
+      <li><a href="javascript:nav(urlWithFallbackAltWu)">urlWithFallbackAltWu</a></li>
+    </ul>
+  </body>
+</html>
