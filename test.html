@@ -2,6 +2,7 @@
   <body>
     <script>
       var renderUrl = "https://pass.maxma.com/render/e8c44274-26c9-4019-9034-409008878070";
+      var renderEncoded = encodeURIComponent(renderUrl);
       var referrer = encodeURIComponent('pass=' + renderEncoded);
       // wp
       var urlWp = 'intent://import/' + renderEncoded + '#Intent;scheme=walletpasses;package=io.walletpasses.android;end';
