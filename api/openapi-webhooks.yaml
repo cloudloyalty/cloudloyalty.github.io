@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: MAXMA Webhooks
-  version: '2022-09-20'
+  version: '2024-12-16'
   x-logo:
     url: logo.png
   description: |
@@ -21,7 +21,7 @@ info:
     | `EVENT_CLIENT_NEW`                | Создан клиент                                                             |
     | `EVENT_CLIENT_CHANGED`            | Данные о клиенте изменились                                               |
     | `EVENT_CLIENT_BONUSES_CHANGED`    | Количество бонусов на счете клиента изменилось                            |
-    | `EVENT_PURCHASE_NEW`              | Создана новая покупка [в разработке]                                      |
+    | `EVENT_PURCHASE_NEW`              | Создана новая покупка                                                     |
 
     ## Аутентификация запросов
 
@@ -158,9 +158,30 @@ components:
                 $ref: '#/components/schemas/clientQuery'
               clientBonuses:
                 $ref: '#/components/schemas/clientBonuses'
+              bonusesDelta:
+                type: object
+                description: Информация об изменении бонусного счета
+                properties:
+                  availableDelta:
+                    type: number
+                    format: int32
+                    description: >
+                      Разница, на которую произошло изменение доступных бонусов:
+                      - положительное значение, если произошло увеличение кол-ва бонусов;
+                      - отрицательное значение, если произошло уменьшение кол-ва бонусов;
+                      - ноль, если изменения этого значения не было.
+                  pendingAmount:
+                    type: number
+                    format: int32
+                    description: >
+                      Разница, на которую произошло изменение бонусов в ожидании:
+                      - положительное значение, если произошло увеличение кол-ва бонусов;
+                      - отрицательное значение, если произошло уменьшение кол-ва бонусов;
+                      - ноль, если изменения этого значения не было.
             required:
               - client
               - clientBonuses
+              - bonusesDelta
 
           EVENT_PURCHASE_NEW:
             type: object
@@ -252,6 +273,9 @@ components:
               totalAmount: 800
               availableAmount: 600
               pendingAmount: 200
+            bonusesDelta:
+              availableDelta: -100
+              pendingDelta: 0
 
         - event: EVENT_PURCHASE_NEW
           eventId: 0a353b66-5ac9-4cbb-9c52-596f46bfac62
@@ -469,5 +493,42 @@ components:
         - collected
 
     purchaseRow:
-      description: Позиция чека (появится позже)
+      description: Позиция чека
       type: object
+      properties:
+        externalId:
+          type: string
+          description: Внешний идентификатор товара или услуги
+        title:
+          type: string
+          description: Наименование товара или услуги
+        sku:
+          type: string
+          description: Артикул или код товара или услуги
+        qty:
+          description: Количество
+          type: number
+          format: float
+        price:
+          description: Цена продажи
+          type: number
+          format: float
+        buyingPrice:
+          description: Закупочная цена
+          type: number
+          format: float
+        totalAmount:
+          description: Итого по строке (до вычета скидок)
+          type: number
+          format: float
+        totalDiscount:
+          $ref: '#/components/schemas/purchaseDiscounts'
+        bonuses:
+          $ref: '#/components/schemas/purchaseBonuses'
+      required:
+        - sku
+        - qty
+        - price
+        - totalAmount
+        - totalDiscount
+        - discounts

@@ -102,7 +102,6 @@ info:
 
         Примеры причин для статуса _error_:
 
-        - требуется оплата;
         - ошибка в интеграции;
         - ошибка на сервере;
         - рептилоиды захватили дата-центр.
@@ -300,8 +299,8 @@ components:
             - pending
             - delivered
             - rejected
+            - undeliverable
             - error
-            - retry_later
         statusDescription:
           title: Пояснение к статусу
           type: string
