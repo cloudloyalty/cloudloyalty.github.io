@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: MAXMA Webhooks
-  version: '2024-12-16'
+  version: '2025-06-25'
   x-logo:
     url: logo.png
   description: |
@@ -170,7 +170,7 @@ components:
                       - положительное значение, если произошло увеличение кол-ва бонусов;
                       - отрицательное значение, если произошло уменьшение кол-ва бонусов;
                       - ноль, если изменения этого значения не было.
-                  pendingAmount:
+                  pendingDelta:
                     type: number
                     format: int32
                     description: >
@@ -375,14 +375,14 @@ components:
 
         birthdate:
           type: string
-          format: date-time
+          format: date
           description: |
             Дата рождения.
   
-            Формат даты: ```1967-11-21T00:00:00+03:00```. Время всегда по нулям.
+            Формат даты: ```1967-11-21```.
   
             Если нам известны только день и месяц рождения, а год рождения клиент не предоставил,
-            год в этом поле будет - 1900, например, ```1900-11-21T00:00:00+03:00```.
+            год в этом поле будет - 1900, например, ```1900-11-21```.
 
         level:
           type: number
@@ -394,6 +394,9 @@ components:
         isPhoneSubscribed:
           type: boolean
           description: Флаг, подписан ли клиент на маркетинговые рассылки по SMS или Viber
+        isChatSubscribed:
+          type: boolean
+          description: Флаг, подписан ли клиент на коммуникацию с чат-ботами
         extraFields:
           type: object
           description: Дополнительные параметры клиента
@@ -522,6 +525,10 @@ components:
           type: number
           format: float
         totalDiscount:
+          type: number
+          format: float
+          description: Сумма скидки
+        discounts:
           $ref: '#/components/schemas/purchaseDiscounts'
         bonuses:
           $ref: '#/components/schemas/purchaseBonuses'
