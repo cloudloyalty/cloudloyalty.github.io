@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: MAXMA Messaging (обратный API)
-  version: '2022-09-22 beta'
+  version: '2025-07-15 beta'
   x-logo:
     url: logo.png
   description: |
@@ -217,6 +217,7 @@ components:
               title: Заголовок
               text: Текст пуш-сообщения
               contentUrl: https://www.mydomain.com/images/image1.jpg
+              url: https://www.mydomain.com/article.html
         notifyUrl: https://app.cloudloyatly.ru/notify
 
     Message:
@@ -278,6 +279,9 @@ components:
           type: string
         contentUrl:
           title: Адрес картинки для отображения вместе с пуш-уведомлением
+          type: string
+        url:
+          title: Ссылка для перехода при открытии пуша
           type: string
       required:
         - text
